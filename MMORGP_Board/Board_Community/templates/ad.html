@@ -1,0 +1,33 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Объявление
+{% endblock title %}
+
+
+{% block content %}
+    <h1>{{ post.heading }}</h1>
+    <h4>{{ post.datetime_in|date:'d M Y' }}</h4>
+    <h3>{{ post.text }}</h3>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" width="150" height="150" alt="">
+    {% else %}
+        <h6>Изображения нет</h6>
+    {% endif %}
+    {% if post.video %}
+        <video width="150" height="150" controls>
+            <source src="{{post.video.url}}" type="video/mp4">
+        </video>
+    {% else %}
+        <h6>Видео нет</h6>
+    {% endif %}
+
+    <a href="{% url 'ad_update' post.id %}"><h7> Изменить объявление </h7></a>
+    <br>
+    <a href="{% url 'ad_delete' post.id %}"><h7> Удалить объявление </h7></a>
+    <hr>
+    <a href="{% url 'response_create' post.id %}"><h7> Оставить отклик </h7></a>
+
+
+{% endblock content %}

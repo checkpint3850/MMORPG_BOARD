@@ -1,0 +1,65 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_tags %}
+{% load i18n %}
+
+{% block title %}
+Отклики
+{% endblock title %}
+
+
+{% block content %}
+<h1>Отклики</h1>
+<h5>{% current_time '%d %b %Y' %}</h5>
+<h4>Количество откликов: {{ response|length }}</h4>
+<hr>
+{% if response %}
+    <table>
+        <tr>
+            <td>Пост</td>
+            <td>Дата публикации</td>
+            <td>Отклик</td>
+        </tr>
+
+        {% for c in response %}
+        <tr>
+            <td>
+                <a href="{% url 'ad_detail' c.post.id %}">{{ c.post }}</a>
+            </td>
+            <td>{{ c.time_response|date:'d M Y' }}</td>
+            <td>{{ c.text|truncatechars:20 }}</td>
+            <td>
+                {% if c.condition == False %}
+                    <a href="{% url 'response_accept' c.id  %}"> Принять отклик </a>
+                {% else %}
+                    <h6> Отклик принят </h6>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'response_delete' c.id  %}"> Удалить отклик </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>Откликов пока нет!</h2>
+{% endif %}
+
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,82 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_tags %}
+{% load i18n %}
+
+{% block title %}
+Объявления
+{% endblock title %}
+
+{% block content %}
+
+<h1>Объявление</h1>
+<h5>{% current_time '%d %b %Y' %}</h5>
+<h4>Количество объявлений: {{ post|length }}</h4>
+<hr>
+{% if post %}
+    <table>
+        <tr>
+            <td>Заголовок</td>
+            <td>Дата публикации</td>
+            <td>Содержание</td>
+            <td>Категории</td>
+            <td>Изображение</td>
+            <td>Видео</td>
+        </tr>
+
+        {% for p in post %}
+        <tr>
+            <td>
+                <a href="{% url 'ad_detail' p.id %}">{{ p.heading }}</a>
+            </td>
+            <td>{{ p.datetime_in|date:'d M Y' }}</td>
+            <td>{{ p.text|truncatechars:20 }}</td>
+            <td>{{ p.category }}</td>
+            <td>
+                {% if p.image %}
+                    <img src="{{ p.image.url }}" width="100" height="100" alt="">
+                {% else %}
+                    <h6>Изображения нет</h6>
+                {% endif %}
+            </td>
+            <td>
+                {% if p.video %}
+                    <video width="150" height="150" controls>
+                        <source src="{{p.video.url}}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <h6>Видео нет</h6>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h4>Объявлений пока нет!</h4>
+{% endif %}
+
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {{ page_obj.number }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <br><br><br>
+        <a class="btn btn-secondary" href="{% url 'ad_create' %}" role="button">Добавить объявление</a>
+    {% endif %}
+
+
+{% endblock content %}
